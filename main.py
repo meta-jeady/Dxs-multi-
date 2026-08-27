@@ -1,6 +1,6 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 import os
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
 CANAL = "@Dxsmultibot"
@@ -41,9 +41,11 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if ok:
         await query.edit_message_text(f"🎉 Parfait {query.from_user.first_name} ! Accès validé ✅")
     else:
-        await query.answer("❌ Tu n'as pas encore rejoint", show_alert=True)
+        await query.answer("❌ Tu n'as pas encore rejoint @Dxsmultibot", show_alert=True)
 
-app = Application.builder().token(TOKEN).build()
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CallbackQueryHandler(check))
-app.run_polling()
+if __name__ == "__main__":
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(check))
+    print("Bot DxS lancé...")
+    app.run_polling()
