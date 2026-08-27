@@ -1,10 +1,24 @@
-import os
+import os, threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
 CANAL = "@Dxsmultibot"
 LIEN = "https://t.me/Dxsmultibot"
+
+# Petit serveur pour que Render Web Service reste Live
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"DxS MULTI V14 Live")
+
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    HTTPServer(("0.0.0.0", port), Handler).serve_forever()
+
+threading.Thread(target=run_server, daemon=True).start()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     name = update.effective_user.first_name
@@ -17,13 +31,10 @@ Bienvenue dans l'élite. Pour activer ton bot WhatsApp, tu dois valider ton acc�
 📍 ÉTAPE OBLIGATOIRE :
 👉 Rejoins @Dxsmultibot
 
-C'est là-bas que tu auras les mises à jour, les nouveaux codes et le support.
-
 Une fois fait, clique sur VÉRIFIER 👇
 ━━━━━━━━━━━━━━━━━━━━
 ⚡ 17 COMMANDS | AI | PAIRING
 Dev by Kco4p tech"""
-
     keyboard = [
         [InlineKeyboardButton("📢 Join Channel", url=LIEN)],
         [InlineKeyboardButton("✅ J'ai rejoint", callback_data="check")]
